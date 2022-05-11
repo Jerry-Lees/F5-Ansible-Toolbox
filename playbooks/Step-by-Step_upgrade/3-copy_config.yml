@@ -19,7 +19,6 @@
      shell: grep Reg /config/bigip.license|awk '{print $4}'
      register: BaseKey
      delegate_to: "{{ ansible_host }}"
-#     run_once: true
 
    - set_fact: 
        BaseKey={{ BaseKey.stdout }}
