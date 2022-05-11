@@ -10,8 +10,8 @@
          server: "{{ ansible_host }}"
          user: "{{ UserName }}"
          validate_certs: false
-       InstallImage: /root/bigip-upgrades/images/BIGIP-15.1.5.1-0.0.14.iso
-#       InstallImage: /root/bigip-upgrades/images/BIGIP-16.1.2.2-0.0.28.iso
+       InstallImage: /root/F5-Ansible-Toolbox/images/BIGIP-15.1.5.1-0.0.14.iso
+
   tasks:
 
 #copies the image "InstallImage" to /shared/images on the target device(s)

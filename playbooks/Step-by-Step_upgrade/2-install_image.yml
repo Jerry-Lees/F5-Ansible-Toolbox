@@ -12,7 +12,6 @@
          validate_certs: false
        InstallVolume: HD1.2
        InstallImage: BIGIP-15.1.5.1-0.0.14.iso
-#       InstallImage: BIGIP-16.1.2.2-0.0.28.iso
 
   tasks:
    - name: Notice of long running task.
