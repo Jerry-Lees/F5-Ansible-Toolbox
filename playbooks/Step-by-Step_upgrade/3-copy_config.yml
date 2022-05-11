@@ -1,0 +1,69 @@
+---
+- name: Upgrade Step 3
+  hosts: wave1
+
+  vars:
+       UserName: admin
+       Password: yourpasswordhere
+       provider:
+         password: "{{ Password }}"
+         server: "{{ ansible_host }}"
+         user: "{{ UserName }}"
+         validate_certs: false
+       SourceVolume: HD1.1
+       InstallVolume: HD1.2
+
+  tasks:
+
+   - name: Retrieve License
+     shell: grep Reg /config/bigip.license|awk '{print $4}'
+     register: BaseKey
+     delegate_to: "{{ ansible_host }}"
+#     run_once: true
+
+   - set_fact: 
+       BaseKey={{ BaseKey.stdout }}
+
+   - name: Display License
+     debug:
+       msg: "Base Key for {{ ansible_host }}: {{ BaseKey }}"
+
+##########################
+# Note: All this licensing stuff needs testing.
+##########################
+#
+#   - name: License BIG-IP using a key
+#     bigip_device_license:
+#       license_key: "{{ BaseKey }}"
+#       accept_eula: yes
+#       provider: "{{ provider }}"
+#
+#   - name: Relicense over the Internet
+#     bigip_command:
+#       commands: /usr/local/bin/SOAPLicenseClient --basekey {{ BaseKey }}
+## If you need a proxy to get to the internet...
+##       commands: "/usr/local/bin/SOAPLicenseClient --proxy your-proxy-ip:3128 --basekey {{ Base_key }}"
+#       provider: "{{ provider }}"
+#     register: result
+#
+##########################
+# End licensing section
+##########################
+
+   - name: Save the running configuration of the BIG-IP
+     bigip_config:
+       save: yes
+       provider: "{{ provider }}"
+
+   - name: Take a UCS of the BIG-IP and store on the BIG-IP
+     bigip_command:
+       commands: "tmsh save sys ucs {{ ansible_host }}-{{ ansible_date_time.date }}.ucs"
+       provider: "{{ provider }}"
+     register: result
+
+   - name: Copy the configuration to the target volume
+     bigip_command:
+       commands: "cpcfg --source={{ SourceVolume }} {{ InstallVolume }}"
+       provider: "{{ provider }}"
+
+...

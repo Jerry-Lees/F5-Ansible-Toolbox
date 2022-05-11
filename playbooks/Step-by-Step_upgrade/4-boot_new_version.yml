@@ -1,0 +1,26 @@
+- name: Upgrade Step 4
+  hosts: wave1
+
+  vars:
+       UserName: admin
+       Password: yourpasswordhere
+       provider:
+         password: "{{ Password }}"
+         server: "{{ ansible_host }}"
+         user: "{{ UserName }}"
+         validate_certs: false
+       InstallVolume: HD1.2
+
+  tasks:
+
+   - name: Activate Boot Location
+     shell: switchboot -b {{ InstallVolume }}
+     delegate_to: "{{ ansible_host }}"
+
+   - name: Notice of long running task.
+     debug:
+       msg: "The next task will appear to be stalled or hung, with no output, while the BIG IPs reboot. To monitor the status of the installation, review the the devices' TMUI or ping the device."
+
+   - name: Booting New Version in New Boot Location
+     reboot:
+       reboot_timeout: 7200
