@@ -23,79 +23,79 @@
         provider: "{{ provider }}"
       delegate_to: localhost
 
-   - name: Notice of long running task.
-     debug:
-       msg: "The next task will appear to be stalled or hung, with no output, while the installation progresses on the BIG IPs. To monitor the status of the installation, review the devices' install progress in the devices' TMUI"
+    - name: Notice of long running task.
+      debug:
+        msg: "The next task will appear to be stalled or hung, with no output, while the installation progresses on the BIG IPs. To monitor the status of the installation, review the devices' install progress in the devices' TMUI"
 
-   - name: Install image in specified volume, but do not activate the volume
-     bigip_software_install:
-       image: "{{ InstallImage }}"
-       volume: "{{ InstallVolume }}"
-       state: installed
-       provider: "{{ provider }}"
-     delegate_to: localhost
-
-#when: failover_state.stdout  == 'standby'
-
-   - name: Retrieve License
-     shell: grep Reg /config/bigip.license|awk '{print $4}'
-     register: BaseKey
-     delegate_to: "{{ ansible_host }}"
-
-   - set_fact: 
-       BaseKey={{ BaseKey.stdout }}
-
-   - name: Display License
-     debug:
-       msg: "Base Key for {{ ansible_host }}: {{ BaseKey }}"
-
+    - name: Install image in specified volume, but do not activate the volume
+      bigip_software_install:
+        image: "{{ InstallImage }}"
+        volume: "{{ InstallVolume }}"
+        state: installed
+        provider: "{{ provider }}"
+      delegate_to: localhost
+ 
+ #when: failover_state.stdout  == 'standby'
+ 
+    - name: Retrieve License
+      shell: grep Reg /config/bigip.license|awk '{print $4}'
+      register: BaseKey
+      delegate_to: "{{ ansible_host }}"
+ 
+    - set_fact: 
+        BaseKey={{ BaseKey.stdout }}
+ 
+    - name: Display License
+      debug:
+        msg: "Base Key for {{ ansible_host }}: {{ BaseKey }}"
+ 
 ##########################
 # Note: All this licensing stuff needs testing.
 ##########################
 #
-#   - name: License BIG-IP using a key
-#     bigip_device_license:
-#       license_key: "{{ BaseKey }}"
-#       accept_eula: yes
-#       provider: "{{ provider }}"
-#
-#   - name: Relicense over the Internet
-#     bigip_command:
-#       commands: /usr/local/bin/SOAPLicenseClient --basekey {{ BaseKey }}
+#    - name: License BIG-IP using a key
+#      bigip_device_license:
+#        license_key: "{{ BaseKey }}"
+#        accept_eula: yes
+#        provider: "{{ provider }}"
+#    
+#    - name: Relicense over the Internet
+#      bigip_command:
+#        commands: /usr/local/bin/SOAPLicenseClient --basekey {{ BaseKey }}
 ## If you need a proxy to get to the internet...
-##       commands: "/usr/local/bin/SOAPLicenseClient --proxy your-proxy-ip:3128 --basekey {{ Base_key }}"
-#       provider: "{{ provider }}"
-#     register: result
+##        commands: "/usr/local/bin/SOAPLicenseClient --proxy your-proxy-ip:3128 --basekey {{ Base_key }}"
+#        provider: "{{ provider }}"
+#      register: result
 #
 ##########################
 # End licensing section
 ##########################
-
-   - name: Save the running configuration of the BIG-IP
-     bigip_config:
-       save: yes
-       provider: "{{ provider }}"
-
-   - name: Take a UCS of the BIG-IP and store on the BIG-IP
-     bigip_command:
-       commands: "tmsh save sys ucs {{ ansible_host }}-{{ ansible_date_time.date }}.ucs"
-       provider: "{{ provider }}"
-     register: result
-
-   - name: Copy the configuration to the target volume
-     bigip_command:
-       commands: "cpcfg --source={{ SourceVolume }} {{ InstallVolume }}"
-       provider: "{{ provider }}"
-
-   - name: Activate Boot Location
-     shell: switchboot -b {{ InstallVolume }}
-     delegate_to: "{{ ansible_host }}"
-
-   - name: Notice of long running task.
-     debug:
-       msg: "The next task will appear to be stalled or hung, with no output, while the BIG IPs reboot. To monitor the status of the installation, review the the devices' TMUI or ping the device."
-
-   - name: Booting New Version in New Boot Location
-     reboot:
-       reboot_timeout: 7200
+ 
+    - name: Save the running configuration of the BIG-IP
+      bigip_config:
+        save: yes
+        provider: "{{ provider }}"
+ 
+    - name: Take a UCS of the BIG-IP and store on the BIG-IP
+      bigip_command:
+        commands: "tmsh save sys ucs {{ ansible_host }}-{{ ansible_date_time.date }}.ucs"
+        provider: "{{ provider }}"
+      register: result
+ 
+    - name: Copy the configuration to the target volume
+      bigip_command:
+        commands: "cpcfg --source={{ SourceVolume }} {{ InstallVolume }}"
+        provider: "{{ provider }}"
+ 
+    - name: Activate Boot Location
+      shell: switchboot -b {{ InstallVolume }}
+      delegate_to: "{{ ansible_host }}"
+ 
+    - name: Notice of long running task.
+      debug:
+        msg: "The next task will appear to be stalled or hung, with no output, while the BIG IPs reboot. To monitor the status of the installation, review the the devices' TMUI or ping the device."
+ 
+    - name: Booting New Version in New Boot Location
+      reboot:
+        reboot_timeout: 7200
 ...
