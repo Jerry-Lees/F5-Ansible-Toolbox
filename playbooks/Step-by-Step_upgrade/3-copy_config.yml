@@ -10,6 +10,7 @@
          server: "{{ ansible_host }}"
          user: "{{ UserName }}"
          validate_certs: false
+         no_f5_teem: true
        SourceVolume: HD1.1
        InstallVolume: HD1.2
 
