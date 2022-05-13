@@ -26,7 +26,8 @@
     - name: Notice of long running task.
       debug:
         msg: "The next task will appear to be stalled or hung, with no output, while the installation progresses on the BIG IPs. To monitor the status of the installation, review the devices' install progress in the devices' TMUI"
-
+      run_once: true
+      
     - name: Install image in specified volume, but do not activate the volume
       bigip_software_install:
         image: "{{ InstallImage }}"
@@ -94,6 +95,7 @@
     - name: Notice of long running task.
       debug:
         msg: "The next task will appear to be stalled or hung, with no output, while the BIG IPs reboot. To monitor the status of the installation, review the the devices' TMUI or ping the device."
+      run_once: true
  
     - name: Booting New Version in New Boot Location
       reboot:
