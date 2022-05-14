@@ -4,7 +4,7 @@ These files are meant as a proof of concept to get you started upgrading with an
 1. Install ansible and copy the ansible user's public key to the BIGIPs via ssh-copy-id
 A good article on this process is here https://www.logicweb.com/knowledgebase/linux/how-to-setup-passwordless-ssh-login-in-linux-with-keys/
 2. Install the daily build of the F5 ansible modules
-The repository is located on github as well and has instructions in the readme.md https://github.com/F5Networks/f5-ansible1
+The repository is located on github as well and has instructions in the readme.md https://github.com/F5Networks/f5-ansible
 3. Populate the inventory/hosts file with your BIG-IPs in groupings of hosts. In the example they are names wave1 and wave2.
 4. The images folder should contain any iso images to deploy to the BIG-IPs
 
