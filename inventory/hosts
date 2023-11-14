@@ -1,6 +1,7 @@
 [wave1]
-bigip01.bigip.local ansible_host=192.168.0.246
-bigip02.bigip.local ansible_host=192.168.0.247
+newbigip01.bigip.local ansible_host=10.100.100.12
+newbigip02.bigip.local ansible_host=10.100.100.13
 
 [wave2]
-bigip02.bigip.local ansible_host=192.168.0.247
+bigip01.bigip.local ansible_host=10.100.100.10
+bigip02.bigip.local ansible_host=10.100.100.11
