@@ -11,9 +11,7 @@
          user: "{{ UserName }}"
          validate_certs: false
        OutputFile: "/var/tmp/BIG-IP_Boot_Locations.txt"
-       
   tasks:
-
    - name: create file
      file:
        dest: "{{ OutputFile }}"
@@ -24,15 +22,15 @@
      shell: "echo > {{ OutputFile }}"
      delegate_to: localhost
       
-   - name: Gather software installed (1: create remote file with data in it.)
+   - name: Gather software installed (1- create remote file with data in it.)
      shell: "echo -n 'Hostname: ' >/var/tmp/{{ ansible_host }}-syssoft.txt&&tmsh list sys global-settings hostname|grep hostname|awk '{print $2}' >> /var/tmp/{{ ansible_host }}-syssoft.txt&&tmsh show sys software status|egrep 'MD1|HD1' >> /var/tmp/{{ ansible_host }}-syssoft.txt&&echo >> /var/tmp/{{ ansible_host }}-syssoft.txt&&echo >> /var/tmp/{{ ansible_host }}-syssoft.txt&&echo '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%' >> /var/tmp/{{ ansible_host }}-syssoft.txt"
      delegate_to: "{{ ansible_host }}"
      
-   - name: Gather software installed (2: copy remote file to local system)
+   - name: Gather software installed (2- copy remote file to local system)
      shell: "scp root@{{ ansible_host }}:/var/tmp/{{ ansible_host }}-syssoft.txt /var/tmp"
      delegate_to: localhost
 
-   - name: Gather software installed (3: concatenate all files into one file)
+   - name: Gather software installed (3- concatenate all files into one file)
      shell: "cat /var/tmp/{{ ansible_host }}-syssoft.txt >> {{ OutputFile }}"
      delegate_to: localhost
 
