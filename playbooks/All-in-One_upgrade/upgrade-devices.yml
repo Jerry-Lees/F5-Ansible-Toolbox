@@ -2,22 +2,22 @@
   hosts: wave1
 
   vars:
+# Set these variables to the appropriate values for your use case
        UserName: admin
        Password: yourpasswordhere
+       InstallImage: BIGIP-17.1.1-0.0.6.iso
+       InstallISO: "/root/F5-Ansible-Toolbox/images/{{ InstallImage }}"
+       SourceVolume: HD1.1
+       InstallVolume: HD1.3
+# End configurable section
        provider:
          password: "{{ Password }}"
          server: "{{ ansible_host }}"
          user: "{{ UserName }}"
          validate_certs: false
          no_f5_teem: true
-       InstallISO: /root/F5-Ansible-Toolbox/images/BIGIP-15.1.5.1-0.0.14.iso
-       SourceVolume: HD1.1
-       InstallVolume: HD1.2
-       InstallImage: BIGIP-15.1.5.1-0.0.14.iso
-
   tasks:
-
-#copies the image "InstallImage" to /shared/images on the target device(s)
+#Copies the image "InstallImage" to /shared/images on the target device(s)
     - name: Copy Image "{{ InstallImage }}"
       bigip_software_image:
         image: "{{ InstallISO }}"
